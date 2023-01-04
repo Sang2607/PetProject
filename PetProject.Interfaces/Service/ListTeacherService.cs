@@ -35,7 +35,7 @@ namespace PetProject.Interfaces.Service
         {
             return await _listTeacher.Create(listTeacher);
         }
-        public bool DeletePerson(int UserId)
+        public bool DeleteTeacher(int UserId)
         {
 
             try
@@ -53,20 +53,16 @@ namespace PetProject.Interfaces.Service
             }
 
         }
-        public bool UpdatePerson(ListTeacher listTeacher)
+        public bool UpdateTeacher(ListTeacher listTeacher)
         {
             try
             {
-                var DataList = _listTeacher.GetAll().Where(x => x.Status != true).ToList();
-                foreach (var item in DataList)
-                {
-                    _listTeacher.Update(item);
-                }
-                return true;
+                 _listTeacher.Update(listTeacher);
+                 return true;
             }
             catch (Exception)
             {
-                return true;
+                return false;
             }
         }
     }

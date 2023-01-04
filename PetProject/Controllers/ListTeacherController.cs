@@ -47,5 +47,43 @@ namespace PetProject.Controllers
             return json;
 
         }
+        [HttpDelete("DeletePerson")]
+        public bool DeletePerson(int UserId)
+        {
+            try
+            {
+                _listTeacherService.DeleteTeacher(UserId);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        [HttpPut("UpdateTeacher")]
+        public bool UpdateTeacher(ListTeacher listTeacher)
+        {
+            try
+            {
+                _listTeacherService.UpdateTeacher(listTeacher);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        [HttpGet("GetAllPersonByName")]
+        public Object GetAllPersonByName(string UserEmail)
+        {
+            var data = _listTeacherService.GetPersonByUserName(UserEmail);
+            var json = JsonConvert.SerializeObject(data, Formatting.Indented,
+                new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                }
+            );
+            return json;
+        }
     }
 }
