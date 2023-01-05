@@ -1,5 +1,7 @@
 @page
-@using StudentManagement.Models
+@using StudentManagement.Data;
+@model StudentManagement.Pages.IndexModel;
+
 
 <h2>Home</h2>
 <script type="text/javascript">
@@ -7,15 +9,14 @@
 
     })
 </script>
-@(Html.DevExtreme().DataGrid<SampleOrder>()
+@(Html.DevExtreme().DataGrid<ListTeacherMDView>()
     .ShowBorders(true)
-    .DataSource(d => d.Mvc().Controller("SampleData").LoadAction("Get").Key("OrderID"))
+    .DataSource(d => d.Mvc().Controller("ListTeacher").LoadAction("GetAll").Key("IdTeacher"))
     .Columns(columns => {
-        columns.AddFor(m => m.OrderID);
-        columns.AddFor(m => m.OrderDate);
-        columns.AddFor(m => m.CustomerName);
-        columns.AddFor(m => m.ShipCountry);
-        columns.AddFor(m => m.ShipCity);
+        columns.AddFor(m => m.IdTeacher);
+        columns.AddFor(m => m.NameTeacher);
+        columns.AddFor(m => m.PhoneNumber);
+        columns.AddFor(m => m.IdSubject);
     })
     .Paging(p => p.PageSize(10))
     .FilterRow(f => f.Visible(true))
@@ -25,7 +26,7 @@
     .RemoteOperations(true)
     .Summary(s => s
         .TotalItems(totalItems => {
-            totalItems.AddFor(m => m.ShipCity).SummaryType(SummaryType.Count);
+            totalItems.AddFor(m => m.IdTeacher).SummaryType(SummaryType.Count);
         })
         .GroupItems(groupItems => {
             groupItems.Add().SummaryType(SummaryType.Count);
