@@ -5,12 +5,15 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PetProject.Model.Model;
 using StudentManagement.Data;
+using StudentManagement.Models;
 using System.Net.WebSockets;
 using System.Text;
 
 
 namespace StudentManagement.Controllers
 {
+    
+
     public class ListTeacherController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -21,7 +24,7 @@ namespace StudentManagement.Controllers
             _client = _httpClientFactory.CreateClient();
         }
         [HttpPost("AddTecher")]
-        public object AddTecher(ListTeacher listTeacher)
+        public async Task<object> AddTecher(FormTeacherViewMD listTeacher)
         {
             StringContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(listTeacher), Encoding.UTF8, "application/json");
             var result =  new ListTeacherMDView();

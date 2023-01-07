@@ -1,35 +1,148 @@
-@page
+﻿@page
 @using StudentManagement.Data;
+@using StudentManagement.Models;
+@using StudentManagement.Controllers;
+
 @model StudentManagement.Pages.IndexModel;
 
 
 <h2>Home</h2>
 <script type="text/javascript">
-    $(document).ready(function(){
-
+    var dxPopupAddTeacher = null;
+    var dxDataGridList = null;
+    $(document).ready(function() {
+        debugger
+        dxPopupAddTeacher = $("#dxPopupAddTeacher").dxPopup("instance");
+        
+        dxDataGridList = $("#dxDataGridList").dxDataGrid("instance");
+        debugger
     })
+    //-----------------------------------------------------Popup Add------------------------------------------------------//
+
+    function bntAddTeeacher(){
+        dxPopupAddTeacher.show();
+        dxPopupAddTeacher.option({
+             contentTemplate: $("#FromAddTeacher")
+        })
+         $("#dxTextBoxNameTeacher").dxTextBox("instance").reset();
+          $("#dxTextBoxPhoneNumber").dxTextBox("instance").reset();
+    }
+    function bntSaveAddTC(){
+         var dxTextBoxNameTeacher = $("#dxTextBoxNameTeacher").dxTextBox("option","value");
+         var dxTextBoxPhoneNumber = $("#dxTextBoxPhoneNumber").dxTextBox("option","value");
+         var parameter = { listTeacher: { "NameTeacher": dxTextBoxNameTeacher, "PhoneNumber": dxTextBoxPhoneNumber,"status":true }};
+         debugger
+          $.ajax({
+            url: '@Url.Action("AddTecher","ListTeacher")',
+            dataType: "json",
+            type: "POST",
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            async: false,
+            cache: false,
+            data: parameter,
+        }).done(function (e) {
+            DevExpress.ui.dialog.alert("<i>Đã thêm thành công !" , "Thông báo");
+            //dxGridLoanListPay.refresh();
+            //dxPopupSettlement.hide();
+
+        });
+    }
+    //-----------------------------------------------------DataGrid------------------------------------------------------//
+
+    function SttMainGrid(container,e){
+        var index = dxDataGridList.pageIndex() * dxDataGridList.pageSize() + e.rowIndex + 1;
+        container.text(index);
+    }
+    function DeleteTeacher(e){
+        var a = e.row.data.IdTeacher;
+        debugger
+    }
 </script>
-@(Html.DevExtreme().DataGrid<ListTeacherMDView>()
+@*--
+Popup
+--*@
+@(Html.DevExtreme().Popup().ID("dxPopupAddTeacher")
+   .ToolbarItems(t=>{
+        t.Add().Location(ToolbarItemLocation.After).Toolbar(Toolbar.Bottom).Widget(w => w.Button().Text("Lưu").Icon("plus").ID("btnSaveAddTC").Type(ButtonType.Success).OnClick("bntSaveAddTC"));
+        t.Add().Location(ToolbarItemLocation.After).Toolbar(Toolbar.Bottom)
+                    .Widget(w=>w.Button().Type(ButtonType.Danger)
+                    .OnClick(@<text>
+                        function(ClosePp){
+                            dxPopupAddTeacher.hide();
+                        }
+                    </text>).Icon("close").Text("Đóng"));
+    })
+    .ShowTitle(true)
+    .Title("Thêm giáo viên")
+    .DragEnabled(false)
+    .Width("50%")
+    .Height("50%")
+    .ShowCloseButton(false)
+    .HideOnParentScroll(true)
+    .CloseOnOutsideClick(false)
+)
+
+@*--
+TamePlate
+--*@
+@using (Html.DevExtreme().NamedTemplate("FromAddTeacher"))
+{
+    @(Html.DevExtreme().Form<FormTeacherViewMD>().ID("dxFormTeacherAdd").ScrollingEnabled(true).LabelLocation(FormLabelLocation.Top)
+        .Items(item =>{
+            item.AddGroup().ColCountByScreen(e => e.Xs(1).Sm(2).Md(2).Lg(2))
+            .Items(grItem => 
+            {
+                grItem.AddSimpleFor(m=>m.NameTeacher).Editor(e=>e.TextBox().ID("dxTextBoxNameTeacher").Placeholder("Nhập tên...").LabelMode(EditorLabelMode.Floating));
+                grItem.AddSimpleFor(m=>m.PhoneNumber).Editor(e=>e.TextBox().ID("dxTextBoxPhoneNumber").Placeholder("Nhập số điện thoại...").LabelMode(EditorLabelMode.Floating));
+            });
+            
+        })
+    )
+}
+@*--
+DataGrid
+--*@
+@(Html.DevExtreme().DataGrid<ListTeacherMDView>().ID("dxDataGridList")
     .ShowBorders(true)
     .DataSource(d => d.Mvc().Controller("ListTeacher").LoadAction("GetAll").Key("IdTeacher"))
+    .Toolbar(toolbar => {
+        toolbar.Items(i =>{
+            i.Add().Location(ToolbarItemLocation.Before).Widget(w => w.Button().ID("btnAddTeacher").Text("Thêm giáo viên").Icon("plus").Type(ButtonType.Normal).OnClick("bntAddTeeacher"));
+        });
+    })
     .Columns(columns => {
-        columns.AddFor(m => m.IdTeacher);
+        columns.Add().DataField("STT").CssClass("cls").Width("40px").CellTemplate(new JS("SttMainGrid")).Alignment(HorizontalAlignment.Center).Fixed(true).FixedPosition(HorizontalEdge.Left);
         columns.AddFor(m => m.NameTeacher);
         columns.AddFor(m => m.PhoneNumber);
         columns.AddFor(m => m.IdSubject);
+        columns.Add().Caption("Chức năng")
+                .Type(GridCommandColumnType.Buttons)
+                .Width(120)
+                .Buttons(b =>
+                {
+                    b.Add().Icon("edit").Hint("Sửa")@*.OnClick("RequestApproveClick").Visible(new JS("visibleBtnRequestApprove"))*@;
+                    b.Add().Icon("remove").Hint("Xóa").OnClick("DeleteTeacher");
+                });
     })
     .Paging(p => p.PageSize(10))
-    .FilterRow(f => f.Visible(true))
-    .HeaderFilter(f => f.Visible(true))
-    .GroupPanel(p => p.Visible(true))
-    .Grouping(g => g.AutoExpandAll(false))
-    .RemoteOperations(true)
+    .ShowBorders(true)
+    .ShowRowLines(true)
+    .FocusedRowEnabled(true)
+    .ColumnAutoWidth(true)
+
     .Summary(s => s
         .TotalItems(totalItems => {
-            totalItems.AddFor(m => m.IdTeacher).SummaryType(SummaryType.Count);
+            totalItems.AddFor(m => m.NameTeacher).SummaryType(SummaryType.Count);
         })
         .GroupItems(groupItems => {
             groupItems.Add().SummaryType(SummaryType.Count);
         })
     )
+    .Pager(p =>
+    {
+        p.ShowPageSizeSelector(true);
+        p.AllowedPageSizes(new[] { 10, 20, 50, 100, 200 });
+        p.ShowInfo(true);
+        p.ShowNavigationButtons(true);
+    })
 )

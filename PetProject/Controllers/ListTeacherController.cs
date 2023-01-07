@@ -25,8 +25,8 @@ namespace PetProject.Controllers
         {
             try
             {
-                 await _listTeacherService.AddPerson(listTeacher);
-                return true;
+                var a = await _listTeacherService.AddPerson(listTeacher);
+                return a;
             }
             catch (Exception)
             {
