@@ -13,7 +13,7 @@ using System.Text;
 namespace StudentManagement.Controllers
 {
     
-
+    [Route("[Controller]/")]
     public class ListTeacherController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -23,8 +23,8 @@ namespace StudentManagement.Controllers
             _httpClientFactory = httpClientFactory;
             _client = _httpClientFactory.CreateClient();
         }
-        [HttpPost("AddTecher")]
-        public async Task<object> AddTecher(FormTeacherViewMD listTeacher)
+        [HttpPost("AddTeacher")]
+        public async Task<object> AddTeacher(FormTeacherViewMD listTeacher)
         {
             StringContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(listTeacher), Encoding.UTF8, "application/json");
             var result =  new ListTeacherMDView();

@@ -31,7 +31,7 @@ namespace PetProject.Controllers
             catch (Exception)
             {
 
-                return false;
+                return "";
             }
         }
         [HttpGet("GetAllTeacher")]

@@ -27,13 +27,13 @@
          $("#dxTextBoxNameTeacher").dxTextBox("instance").reset();
           $("#dxTextBoxPhoneNumber").dxTextBox("instance").reset();
     }
-    function bntSaveAddTC(){
+     function bntSaveAddTC(){
          var dxTextBoxNameTeacher = $("#dxTextBoxNameTeacher").dxTextBox("option","value");
          var dxTextBoxPhoneNumber = $("#dxTextBoxPhoneNumber").dxTextBox("option","value");
          var parameter = { listTeacher: { "NameTeacher": dxTextBoxNameTeacher, "PhoneNumber": dxTextBoxPhoneNumber,"status":true }};
          debugger
           $.ajax({
-            url: '@Url.Action("AddTecher","ListTeacher")',
+            url: '@Url.Action("AddTeacher","ListTeacher")',
             dataType: "json",
             type: "POST",
             contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -42,10 +42,10 @@
             data: parameter,
         }).done(function (e) {
             DevExpress.ui.dialog.alert("<i>Đã thêm thành công !" , "Thông báo");
-            //dxGridLoanListPay.refresh();
-            //dxPopupSettlement.hide();
-
+        dxPopupAddTeacher.hide();
+        dxDataGridList.refresh();
         });
+
     }
     //-----------------------------------------------------DataGrid------------------------------------------------------//
 
