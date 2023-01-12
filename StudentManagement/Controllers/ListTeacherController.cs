@@ -13,7 +13,7 @@ using System.Text;
 namespace StudentManagement.Controllers
 {
     
-    [Route("[Controller]/")]
+    [Route("ListTeacher")]
     public class ListTeacherController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -50,6 +50,18 @@ namespace StudentManagement.Controllers
 
             return DataSourceLoader.Load((dynamic)result, loadOptions);
         }
-
+        [HttpDelete("DeleteTeacher")]
+        public async Task<object> DeleteTeacher(int UserId)
+        {
+            StringContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(UserId), Encoding.UTF8, "application/json");
+            var result = new ListTeacherMDView();
+             Task.Run(async () =>
+            {
+                var response = await _client.DeleteAsync($"https://localhost:7161/api/ListTeacher/DeletePerson?{content}");
+                var body = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<ListTeacherMDView>(body);
+            }).Wait();
+            return result;
+        }
     }
 }
