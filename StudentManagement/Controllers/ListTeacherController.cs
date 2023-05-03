@@ -24,17 +24,15 @@ namespace StudentManagement.Controllers
             _client = _httpClientFactory.CreateClient();
         }
         [HttpPost("AddTeacher")]
-        public async Task<object> AddTeacher(FormTeacherViewMD listTeacher)
+        public object AddTeacher(FormTeacherViewMD listTeacher)
         {
             StringContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(listTeacher), Encoding.UTF8, "application/json");
-            var result =  new ListTeacherMDView();
             Task.Run(async () =>
             {
                 var response = await _client.PostAsync($"https://localhost:7161/api/ListTeacher/AddPerson", content);
                 var body = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<ListTeacherMDView>(body);
             }).Wait();
-            return result;
+            return "";
         }
         [HttpGet("GetAll")]
         public object GetAll(DataSourceLoadOptions loadOptions) 
@@ -51,17 +49,24 @@ namespace StudentManagement.Controllers
             return DataSourceLoader.Load((dynamic)result, loadOptions);
         }
         [HttpDelete("DeleteTeacher")]
-        public async Task<object> DeleteTeacher(int UserId)
+        public string DeleteTeacher(int UserId)
         {
-            StringContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(UserId), Encoding.UTF8, "application/json");
-            var result = new ListTeacherMDView();
              Task.Run(async () =>
             {
-                var response = await _client.DeleteAsync($"https://localhost:7161/api/ListTeacher/DeletePerson?{content}");
-                var body = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<ListTeacherMDView>(body);
+                var response = await _client.DeleteAsync($"https://localhost:7161/api/ListTeacher/DeletePerson?UserId={UserId}");
             }).Wait();
-            return result;
+            return "done";
+        }
+        [HttpPut("UpDate")]
+        public object UpDate(FormTeacherViewMD listTeacher)
+        {
+            StringContent content = new StringContent(System.Text.Json.JsonSerializer.Serialize(listTeacher), Encoding.UTF8, "application/json");
+            Task.Run(async () =>
+            {
+                var response = await _client.PutAsync($"https://localhost:7161/api/ListTeacher/AddPerson", content);
+                var body = await response.Content.ReadAsStringAsync();
+            }).Wait();
+            return "";
         }
     }
 }

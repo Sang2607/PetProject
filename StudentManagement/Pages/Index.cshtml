@@ -11,11 +11,8 @@
     var dxPopupAddTeacher = null;
     var dxDataGridList = null;
     $(document).ready(function() {
-        debugger
         dxPopupAddTeacher = $("#dxPopupAddTeacher").dxPopup("instance");
-        
         dxDataGridList = $("#dxDataGridList").dxDataGrid("instance");
-        debugger
     })
     //-----------------------------------------------------Popup Add------------------------------------------------------//
 
@@ -40,11 +37,10 @@
             async: false,
             cache: false,
             data: parameter,
-        }).done(function (e) {
-            DevExpress.ui.dialog.alert("<i>Đã thêm thành công !" , "Thông báo");
+        })
+         DevExpress.ui.dialog.alert("<i>Đã thêm thành công !" , "Thông báo");
         dxPopupAddTeacher.hide();
         dxDataGridList.refresh();
-        });
 
     }
     //-----------------------------------------------------DataGrid------------------------------------------------------//
@@ -54,7 +50,8 @@
         container.text(index);
     }
     function DeleteTeacher(e){
-        var a ={deleteTC:e.row.data.IdTeacher}
+        var a ={UserId:e.row.data.IdTeacher}
+        debugger
         $.ajax({
             url: '@Url.Action("DeleteTeacher","ListTeacher")',
             dataType: "json",
@@ -63,8 +60,12 @@
             async: false,
             cache: false,
             data: a,
-        }).done(function (e) {
-            DevExpress.ui.dialog.alert("<i>Đã xóa thành công !" , "Thông báo");})
+        })
+            DevExpress.ui.dialog.alert("<i>Đã xóa thành công !" , "Thông báo");
+            dxDataGridList.refresh();
+    }
+    function PopUpdateTeacher(){
+
     }
 </script>
 @*--
@@ -89,6 +90,27 @@ Popup
     .ShowCloseButton(false)
     .HideOnParentScroll(true)
     .CloseOnOutsideClick(false)
+)
+@(Html.DevExtreme().Popup().ID("dxPopupUpdateTeacher")
+   .ToolbarItems(t=>{
+        t.Add().Location(ToolbarItemLocation.After).Toolbar(Toolbar.Bottom).Widget(w => w.Button().Text("Lưu").Icon("plus").ID("btnSaveAddTC").Type(ButtonType.Success).OnClick("bntSaveAddTC"));
+        t.Add().Location(ToolbarItemLocation.After).Toolbar(Toolbar.Bottom)
+                    .Widget(w=>w.Button().Type(ButtonType.Danger)
+                    .OnClick(@<text>
+                        function(ClosePp){
+                            dxPopupAddTeacher.hide();
+                        }
+                    </text>).Icon("close").Text("Đóng"));
+    })
+    .ShowTitle(true)
+    .Title("Chỉnh sửa thông tin giáo viên")
+    .DragEnabled(false)
+    .Width("50%")
+    .Height("50%")
+    .ShowCloseButton(false)
+    .HideOnParentScroll(true)
+    .CloseOnOutsideClick(false)
+    .ContentTemplate(new TemplateName("TLFormUpdate"))
 )
 
 @*--
@@ -129,7 +151,7 @@ DataGrid
                 .Width(120)
                 .Buttons(b =>
                 {
-                    b.Add().Icon("edit").Hint("Sửa")@*.OnClick("RequestApproveClick").Visible(new JS("visibleBtnRequestApprove"))*@;
+                    b.Add().Icon("edit").Hint("Sửa").OnClick("PopUpdateTeacher");
                     b.Add().Icon("remove").Hint("Xóa").OnClick("DeleteTeacher");
                 });
     })

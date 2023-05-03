@@ -20,6 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\PetProject.Interfaces\PetProject.Interfaces.csproj" />
       <ProjectReference Include="..\PetProject.Model\PetProject.Model.csproj" />
+      <ProjectReference Include="..\PetProject\PetProjectAPI.csproj" />
     </ItemGroup>
 
     <ProjectExtensions><VisualStudio><UserProperties TemplateFeatures="NETCORE" /></VisualStudio></ProjectExtensions>
